@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from hpbn.co/primer-on-latency-and-bandwidth/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 17 Dec 2018 23:46:06 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Networking 101: Primer on Latency and Bandwidth - High Performance
+Browser Networking (O'Reilly)</title>
+<meta name="description" content=
+"What every web developer must know about mobile networks, protocols, and APIs provided by browser to deliver the best user experience.">
+
+<script async src="../assets/5e7a4451127bdccbb9346f1c8744c0d9.js"></script>
+<script async src="../../www.google-analytics.com/analytics.js"></script>
+<link rel="preconnect" href="http://fonts.gstatic.com/" crossorigin="anonymous">
+<link href=
+"https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,600"
+rel="stylesheet">
+<link rel="stylesheet" href="../assets/b708e9296b5e26f6bd725561648a1dda.css">
+<link rel="manifest" href="../7a58c37113db4464699ec4f4646b5566.json">
+<link rel="icon" sizes="192x192" href="../assets/icons/icon-192.png">
+<meta name="theme-color" content="#000">
+<meta itemprop="name" content=
+"Networking 101: Primer on Latency and Bandwidth - High Performance Browser Networking (O'Reilly)">
+<meta itemprop="description" content=
+"What every web developer must know about mobile networks, protocols, and APIs provided by browser to deliver the best user experience.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content=
+"Networking 101: Primer on Latency and Bandwidth - High Performance Browser Networking (O'Reilly)">
+<meta name="twitter:description" content=
+"What every web developer must know about mobile networks, protocols, and APIs provided by browser to deliver the best user experience.">
+<meta name="twitter:creator" content="@igrigorik">
+<meta name="twitter:image:src" content="https://hpbn.co/assets/twitter.jpg">
+<meta property="og:title" content=
+"Networking 101: Primer on Latency and Bandwidth - High Performance Browser Networking (O'Reilly)">
+<meta property="og:description" content=
+"What every web developer must know about mobile networks, protocols, and APIs provided by browser to deliver the best user experience.">
+<meta property="og:site_name" content="High Performance Browser Networking">
+<meta property="fb:admins" content="688996186">
+<script type="application/ld+json">
+{"@context":"http://schema.org/","@type":"Article","headline":"Networking 101: Primer on Latency and Bandwidth - High Performance Browser Networking (O'Reilly)","mainEntityOfPage":{"@type":"WebPage","@id":"https://google.com/article"},"image":{"@type":"ImageObject","url":"https://hpbn.co/assets/share.jpg","height":261,"width":696},"author":{"@type":"Person","url":"https://www.igvita.com/","name":"Ilya Grigorik"},"datePublished":"2013-10-15T13:00:00Z","dateModified":"2017-11-09T02:12:39Z","publisher":{"@type":"Organization","name":"O'Reilly","logo":{"@type":"ImageObject","url":"http://cdn.oreillystatic.com/images/sitewide-headers/ml-header-about.png","width":600,"height":60}}}
+</script>
+
+<body data-type="book">
+  <header>
+    <div id="book-title">
+      <div class="center">
+        <input type="checkbox" class="check" id="check"> <label for="check"
+        class="icon"><svg viewbox="0 0 18 18">
+        <title>Menu</title>
+        <path fill="white" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z">
+        </path></svg></label> <a href="../index.html">High Performance Browser
+        Networking</a> <span>&nbsp;|&nbsp; O'Reilly</span>
+        <div class="drawer menu">
+          <div class="title">
+            Primer on Latency and Bandwidth
+          </div>
+
+          <hr>
+
+          <ul class="content-container" id="nav">
+          </ul>
+
+          <hr>
+
+          <ul class="content-container" id="nav-other">
+            <li>
+              <a href="../index.html#toc">Table of Contents</a>
+
+            <li>
+              <a href="../index.html#author">About the Author</a>
+
+            <li>
+              <a id="feedback" target="_blank" href=
+              "https://github.com/igrigorik/hpbn.co/issues/new?title=%5BPrimer%20on%20Latency%20and%20Bandwidth%5D:%20...">
+              Submit Feedback</a>
+          </ul>
+        </div>
+        <label for="check" class="closemenu">&nbsp;</label>
+      </div>
+    </div>
+
+    <h1>Introdução sobre Latência e Largura de Banda</h1>
+
+    <p id="chapter">Networking 101, Capítulo 1
+  </header>
+
+  <article data-type="chapter" id="LATENCY_BANDWIDTH_PRIMER" class=
+  "pagenumrestart">
+    <section>
+      <h2 id="speed-is-a-feature"><a href="#speed-is-a-feature" class=
+      "anchor">§</a>Velocidade é uma requisito importante</h2>
+
+      <p>O surgimento e o rápido crescimento da indústria de otimização de desempenho da web (WPO) nos últimos anos é um sinal claro da crescente demanda e importância por velocidade e rapidez nas experiências dos usuários. E isso não é simplesmente uma necessidade psicológica por velocidade em nosso mundo cada vez mais acelerado e conectado, mas um requisito impulsionado por resultados empíricos, medidos em relação ao desempenho final dos muitos negócios on-line:</p>
+
+      <ul>
+        <li>
+          <p>Sites mais rápidos levam a um melhor envolvimento do usuário.
+
+        <li>
+          <p>Sites mais rápidos levam a uma melhor retenção de usuários.
+
+        <li>
+          <p>Sites mais rápidos levam a conversões mais altas.
+      </ul>
+
+      <p>Simplificando, a velocidade é um requisito. E para entregá-la, precisamos entender os muitos fatores e limitações fundamentais que estão em jogo. Neste capítulo, nos concentraremos nos dois componentes críticos que ditam o desempenho de todo o tráfego de rede: latência e largura de banda
+      (<a data-type="xref" href="#bw-latency-fig">Figure&nbsp;1-1</a>).
+
+      <dl>
+        <dt>Latência
+
+        <dd>
+          <p>Tempo que leva para um pacote de dados percorrer uma rede do ponto de origem até o ponto de destino.
+
+        <dt>Largura de Banda
+
+        <dd>
+          <p>Máxima taxa de transferência de um canal de comunicação lógico ou físico
+      </dl>
+
+      <figure id="bw-latency-fig">
+        <img src="../assets/diagrams/9f12afe5ca29ba5c2ad555fcee5bd568.svg" alt=
+        "Figure 1-1. Latency and bandwidth">
+        <figcaption>
+          <span class="label">Figura 1-1.</span> Latência e Largura de Banda
+        </figcaption>
+      </figure>
+
+      <p>Para um melhor entendimento de como a largura de banda e a latência funcionam em conjunto, teremos que usar ferramentas para que possamos nos aprofundar nas características internas e de desempenho dos pacotes TCP, UDP e de todos os protocolos de aplicativos acima deles.
+
+      <aside>
+        <h4 id="decreasing-transatlantic-latency-with-hibernia-express">
+        <a href="#decreasing-transatlantic-latency-with-hibernia-express"
+        class="anchor">§</a>Diminuido a latência transatlântica com o Hibernia Express</h4>
+
+        <p>Latência é um critério importante por muitos algoritmos de negociação utilizados com muita frequência no mercados financeiro, onde uma pequena poucos milissegundos pode acarretar em perdas ou lucros de milhões de dólares.
+
+        <p>Em setembro de 2015, a Hibernia Networks lançou um novo link de fibra ótica ("Hibernia Express") projetado especificamente para garantir a menor latência entre Nova York e Londres seguindo a rota do grande círculo entre as cidades. O custo total do projeto é estimado em mais de 300 milhões de dólares e a nova rota possui uma latência de 58.95 ms entre as cidades, o que dá uma vantagem de aproximadamente 5 milissegundos em comparação com todos os outros links transatlânticos existentes. Isso se traduz em 60 milhões de dólares por milissegundo
+        economizado!
+
+        <p>Latência é caro tanto no sentido literal quanto no sentido figurado.
+      </aside>
+    </section>
+
+    <section>
+      <h2 id="the-many-components-of-latency"><a href=
+      "#the-many-components-of-latency" class="anchor">§</a>Os Diversos Componentes da Latência</h2>
+
+      <p>Latência é o tempo que leva para uma mensagem, ou um pacote, viajar do ponto de origem até o ponto de destino. Essa é uma definição simples e útil, mas muitas vezes oculta muitas informações úteis - cada sistema contém várias origens, ou componentes, contribuindo para o tempo total necessário para que uma mensagem seja entregue e é importante entender quais são esses componentes e o quê caracteriza seu desempenho.
+
+      <p>Vamos dar uma olhada mais de perto em alguns componentes comuns que contribuem no efeito latência em um roteador típico na Internet, que é o elemento responsável por retransmitir uma mensagem entre o cliente e o servidor:
+
+      <dl>
+        <dt>Atraso de propagação
+
+        <dd>
+          <p>Quantidade de tempo necessária para uma mensagem viajar do emissor para o receptor, que é uma função da distância em relação à velocidade com a qual o sinal se propaga.
+
+        <dt>Atraso de Transmissão
+
+        <dd>
+          <p>Quantidade de tempo necessária para enviar todos os bits do pacote através do link, que é uma função do tamanho do pacote e da taxa de velocidade do link. 
+
+        <dt>Atraso de Processamento
+
+        <dd>
+          <p>Quantidade de tempo necessária para processar o cabeçalho do pacote, verificar se existe  erros no nível de bit e determinar o destino do pacote.
+
+        <dt>Atraso na Fila
+
+        <dd>
+          <p>Quantidade de tempo que o pacote fica aguardando na fila até que ele possa ser processado.
+      </dl>
+
+      <p>A latência total entre o cliente e o servidor é a soma de todos os atrasos listados. O tempo de propagação é caracterizado pela distância e pelo meio pelo qual o sinal viaja - como veremos, a velocidade de propagação é representado por um pequeno fator constante da velocidade da luz. Por outro lado, o atraso de transmissão é caracterizado pela taxa de velocidade disponível do link de transmissão e não tem nada a ver com a distância entre o cliente e o servidor. Por exemplo, vamos supor que queremos transmitir um arquivo de 10 Mb em dois links: 1 Mbps e 100 Mbps. Levará 10 segundos para colocar todo o arquivo "on the wire" no link de 1 Mbps e apenas 0,1 segundos no link de 100 Mbps.
+
+      <div data-type="note" id="id-Wms6U1SP">
+        <p>As taxas de dados de rede são normalmente medidas em bits por segundo (bps), enquanto as taxas de dados para equipamentos sem rede são normalmente mostradas em bytes por segundo (Bps). Esta é uma fonte comum de confusão, preste muita atenção às unidades.
+
+        <p>Por exemplo, para colocar um arquivo de 10 megabytes (MB) "on the wire" através de um link de 1Mbps, vamos precisar de 80 segundos. 10MB é igual a 80Mb porque há 8 bits para cada byte!
+      </div>
+
+      <p>Em seguida, uma vez que o pacote chega ao roteador, este deverá examinar o cabeçalho do pacote para determinar a rota de saída e pode executar outra verificação nos dados - isso também leva tempo. Muito dessa lógica é realizada pelo hardware, por isso os atrasos são muito pequenos, mas eles existem. E, finalmente, se os pacotes estão chegando a um ritmo mais rápido do que o
+      roteador é capaz de processar, em seguida, os pacotes são enfileirados dentro de um buffer de entrada. O tempo que os dados passam na fila dentro do buffer é conhecido como atraso de fila.
+
+      <p>Cada pacote que viaja pela rede poderá sofrer o efeito de muitos casos de cada um destes atrasos. Quanto maior for a distância entre o ponto de origem e o ponto de destino, mais tempo levará para se propagar. Quanto mais roteadores enontrarmos no meio do caminho , maior serão os atrasos de processamento e transmissão para cada pacote. Finalmente, quanto maior for a densidade de tráfego ao longo do caminho, maior a probabilidade de pocotes serem enfileirados e polr conseguinte sofrendo atraso dentro de um ou mais buffers.
+
+      <aside>
+        <h4 id="bufferbloat-in-your-local-router"><a href=
+        "#bufferbloat-in-your-local-router" class="anchor">§</a>Bufferbloat no seu Roteador Local</h4>
+
+        <p><em>Bufferbloat</em> é um termo que foi criado e popularizado por
+        Jim Gettys em 2010, e é um ótimo exemplo de atraso na fila afetando
+        o desempenho geral da rede.
+
+        <p>O problema implícito é que muitos roteadores agora estão sendo fabricados com  buffers de entrada maiores sob o pretexto de que descartar pacotes deve ser evitado a todo custo. No entanto, isto quebra os mecanismos que evitam o congestionamento de pacotes TCP (topico de nosso próximo capítulo), e introduz atrasos de latência altos e oscilantes na rede.
+
+        <p>A boa notícia é que o novo gerenciamento de fila ativa CoDel foi proposto para resolver este problema, e foi implementado no kernel do Linux 3.5+. Para saber mais consulte
+        <a href="http://queue.acm.org/detail.cfm?id=2209336">"Controlling Queue Delay"</a> in ACM
+        Queue.
+      </aside>
+    </section>
+
+    <section>
+      <h2 id="speed-of-light-and-propagation-latency"><a href=
+      "#speed-of-light-and-propagation-latency" class="anchor">§</a>Velocidade da Luz e Latência de Propagação</h2>
+
+      <p>Como Einstein descreveu em sua teoria da relatividade, a velocidade da luz é a velocidade máxima em que toda a energia, matéria e informação pode viajar. Essa observação coloca um limite rígido no tempo de propagação de qualquer pacote de rede. 
+
+      <p>A boa notícia é que a velocidade da luz é alta: 299.792.458 metros por segundo. No entanto, e há sempre uma no entanto, que é a velocidade da luz no vácuo. Em vez disso, nossos pacotes viajam através de um meio, como um fio de cobre ou um cabo de fibra ótica, o que reduz a velocidade do sinal (Tabela 1-1). Essa relação entre a velocidade da luz e a velocidade com que o pacote viaja em um material é conhecida como índice de refração do material. Quanto maior o valor, a luz viaja mais devagar nesse meio. (<a data-type="xref" href=
+      "#geo-latency-table">Tabela&nbsp;1-1</a>).
+
+      <p>O valor típico do índice de refracção de uma fibra óptica, através do qual a maioria dos nossos pacotes viajam através saltos de longa distância, podem variar entre 1,4 e 1,6 - lenta mas seguramente estamos melhorando a qualidade dos materiais e a reduzindo o índice de refração. Mas, para simplificar, a regra prática é assumir que a velocidade da luz na
+      fibra é de cerca de 200.000.000 metros por segundo, o que corresponde a um índice de refração de aproximadamente 1,5. A parte notável sobre isso é que já estamos dentro de um pequeno fator constante da velocidade máxima! Uma incrível conquista de engenharia por si só.
+
+      <figure id="geo-latency-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Roteador
+              <th>Distância
+              <th>Tempo, vel. luz no vácuo
+              <th>Tempo, vel. luz na fibra
+              <th>Tempo de Ida e Volta (RTT) na fibra 
+
+          <tbody>
+            <tr>
+              <td>New York a San Francisco
+              <td>4,148 km
+              <td>14 ms
+              <td><strong>21 ms</strong>
+              <td>42 ms
+
+            <tr>
+              <td>New York a London
+              <td>5,585 km
+              <td>19 ms
+              <td><strong>28 ms</strong>
+              <td>56 ms
+
+            <tr>
+              <td>New York a Sydney
+              <td>15,993 km
+              <td>53 ms
+              <td><strong>80 ms</strong>
+              <td>160 ms
+
+            <tr>
+              <td>Circunferênica Equatorial
+              <td>40,075 km
+              <td>133.7 ms
+              <td><strong>200 ms</strong>
+              <td>200 ms
+        </table>
+
+        <figcaption>
+          <span class="label">Tabela 1-1.</span> Latências de sinal no vácuo e na fibra
+        </figcaption>
+      </figure>
+
+      <p>A velocidade da luz é rápida, mas ainda assim leva 160 milissegundos para fazer a viagem de ida e volta (RTT) de Nova
+      York a Sydney. De fato, os números na <a data-type="xref" href=
+      "#geo-latency-table">Tabela&nbsp;1-1</a> são irreais, pois eles assumem que o pacote viaja através de um cabo de fibra ótica ao longo do caminho do grande círculo (a menor distância entre dois pontos no globo) entre as cidades. Na prática, esse raramente é o caso, e o pacote levaria uma
+      rota muito mais longa entre Nova York e Sydney. Cada salto ao longo desta rota introduzirá atrasos adicionais de roteamento, processamento, enfileiramento e transmissão. Como resultado, o RTT real entre Nova York e Sydney, sobre nossas redes existentes, parece estar na faixa de 200 a 300 milissegundos. Tudo considerado, isso ainda parece bem rápido, certo?
+
+      <p>Não estamos acostumados a medir nossos compromissos em milissegundos, mas estudos mostram que a maioria de nós perceberá um atraso de mais de 100-200 milissegundos introduzindo em um compromisso. Quando o atraso é maior que 300 milissegundos, o compromisso é frequentemente relatado como e, na barreira de 1.000 milissegundos (1 segundo), muitos usuários já executaram uma alternância de contexto mental enquanto aguardavam a resposta — consulte <a data-type=
+      "xref" href=
+      "../primer-on-web-performance/index.html#speed-performance-and-human-perception">Velocidade, Desempenho e Percepção Humada</a>.
+
+      <p>A questão é simples: para proporcionar a melhor experiência e manter os usuários envolvidos na tarefa, precisamos que nossos aplicativos respondam dentro de centenas de milésimos de segundo. Isso não nos deixa, e especialmente a rede, com muito espaço para
+      erros. <strong>Para ter sucesso, a latência de rede deve ser cuidadosamente gerenciada e ser um critério de design explícito em todos os estágios de desenvolvimento.</strong>
+
+      <div data-type="note" id="id-xesGuDH5">
+        <p>Os serviços de rede de distribuição de conteúdo (CDN - Content Delivery Network) oferecem muitos benefícios, mas o principal deles é a simples observação de que distribuir o conteúdo em todo o mundo e servir esse conteúdo de um local próximo ao cliente nos permite reduzir significativamente o tempo de propagação de todos os pacotes de dados.
+
+        <p>Podemos não ser capazes de fazer os pacotes viajarem mais rápido, mas podemos reduzir a distância posicionando estrategicamente nossos servidores os usuários! Aproveitar um CDN para atender seus dados pode oferecer benefícios de desempenho.
+      </div>
+    </section>
+
+    <section>
+      <h2 id="last-mile-latency"><a href="#last-mile-latency" class=
+      "anchor">§</a>Latência da Última Milha</h2>
+
+      <p>Ironicamente, muitas vezes são as últimas milhas, não o cruzamento dos oceanos ou continentes, onde a latência significativa é introduzida: o infame problema de última milha. Para conectar sua casa ou escritório à Internet, seu provedor de Internet precisa encaminhar os cabos pelo bairro,
+      agregar o sinal e encaminhá-lo para um nó de roteamento local. Na prática, dependendo do tipo de conectividade, metodologia de roteamento e tecnologia implantada, esses primeiros poucos saltos sozinhos podem levar dezenas de milissegundos.
+
+      <p>De acordo com os relatórios anuais "Measuring Broadband America" conduzido pela Federal Communications Commission (FCC), as latências de ultima milha para banda larga terrestre (DSL, cabo, fibra) dentro dos Estados Unidos permaneceram relativamente estáveis ao longo do tempo: a fibra tem melhor desempenho médio (10-20 ms), seguido por cabo (15-40 ms) e DSL (30-65 ms).
+
+      <p>Na prática isso se traduz em 10-65 ms de latência apenas para o nó de medição mais próximo na rede principal do provedor, antes do pacote ser mesmo encaminhado para o seu destino! O relatório da FCC está focado nos Estados Unidos, mas a latência de última milha é um desafio para todos os provedores de Internet, independentemente da sua localização. Para os curiosos, um simples <code> traceroute </code> muitas vezes pode lhe dizer muito sobre a topologia e desempenho do seu provedor de Internet.
+
+      <div data-type="example" id="-ensoIbIN">
+        <pre data-type="programlisting">
+  <strong>$&gt; traceroute google.com</strong>
+  traceroute to google.com (74.125.224.102), 64 hops max, 52 byte packets
+   1  10.1.10.1 (10.1.10.1)  7.120 ms  8.925 ms  1.199 ms <a class="counter"
+id="router-co" href="#router"></a>
+   2  96.157.100.1 (96.157.100.1)  20.894 ms  32.138 ms  28.928 ms
+   3  x.santaclara.xxxx.com (68.85.191.29)  9.953 ms  11.359 ms  9.686 ms
+   4  x.oakland.xxx.com (68.86.143.98)  24.013 ms 21.423 ms 19.594 ms
+   5  68.86.91.205 (68.86.91.205)  16.578 ms  71.938 ms  36.496 ms
+   6  x.sanjose.ca.xxx.com (68.86.85.78)  17.135 ms  17.978 ms  22.870 ms
+   7  x.529bryant.xxx.com (68.86.87.142)  25.568 ms  22.865 ms  23.392 ms
+   8  66.208.228.226 (66.208.228.226)  40.582 ms  16.058 ms  15.629 ms
+   9  72.14.232.136 (72.14.232.136)  20.149 ms  20.210 ms  18.020 ms
+  10  64.233.174.109 (64.233.174.109)  63.946 ms  18.995 ms  18.150 ms
+  11  x.1e100.net (74.125.224.102)  18.467 ms  17.839 ms  17.958 ms <a class=
+"counter" id="google-co" href="#google"></a>
+</pre>
+        <ol class="notation">
+          <li>
+            <a class="co" id="router" href="#router-co"></a>
+            <p>1º Salto: roteador wireless local
+
+          <li>
+            <a class="co" id="google" href="#google-co"></a>
+            <p>11º Salto: servidor Google
+        </ol>
+      </div>
+
+      <p>No exemplo anterior, o pacote inicia sua jornada na cidade de Sunnyvale, passa por Santa Clara, depois por Oakland, retorma a San Jose e é encaminhado para o datacenter "529 Bryant", no ponto em que foi roteado para o Google e chega ao seu destino no 11º salto. Todo esse processo levou, em média, 18 milissegundos. Nada mal, considerando todo este percuruso, mas ao mesmo tempo o pacote poderia ter viajado por toda a extensão dos Estados Unidos!
+
+      <p>As latências de última milha podem variar muito entre os provedores de Internet devido a tecnologia implantada, topologia da rede e até a hora do dia. Como usuário final, e se você estiver procurando por uma melhor navegação na Web, certifique-se de medir e comparar as latências de última milha do svários provedores disponíveis em sua região.
+
+      <div data-type="note" id="id-xesvfZI5">
+        <p>É a latência e não a largura de banda que é responsávelo pelo gargalo de desempenho para a maioria dos sites! Para entender o porquê, precisamos entender o funcionamento dos protocolos TCP e HTTP - assuntos que abordaremos nos próximos capítulos. No entanto, se estiver curioso, sinta-se à vontade para pular para <a data-type=
+        "xref" href=
+        "../primer-on-web-performance/index.html#more-bandwidth-doesnt-matter-much">Mais Largura de Banda More não é o (mais) importante</a>.
+      </div>
+
+      <aside>
+        <h4 id="measuring-latency-with-traceroute"><a href=
+        "#measuring-latency-with-traceroute" class="anchor">§</a>Medindo a Latênica com Traceroute</h4>
+
+        <p>Traceroute é uma ferramenta de diagnóstico de rede utilizada para identificar o 
+        percurso de roteament do pacote e a latênica de cada salto de rede em uma rede IP. Para identificar os saltos individuais, o traceroute envia uma sequência de pacotes para o destino com um "limite de saltos" crescente (1, 2, 3 e assim por diante). Quando o limite de saltos é atingido, o intermediário retorna uma mensagem de Tempo Excedido ICMP, permitindo que a ferramenta possa medir a latência de cada salto de rede.
+        
+        <p> Nas plataformas Unix, a ferramenta pode ser executada a partir da linha de comando via <code>traceroute</code>, e no Windows é conhecida como <code>tracert</code>
+      </aside>
+    </section>
+
+    <section>
+      <h2 id="bandwidth-in-core-networks"><a href="#bandwidth-in-core-networks"
+      class="anchor">§</a>Largura de Banda nas Redes Centrais (Core Networks)</h2>
+
+      <p>Uma fibra ótica funciona como um “tubo de luz”, ligeiramente mais grosso do que um cabelo humano, projetado para transmitir luz entre as duas extremidades do cabo. Fios de metal também são usados, mas estão sujeitos a maior perda de sinal, interferência eletromagnética e custos de manutenção mais altos durante a vida útil. As chances são de que seus pacotes percorram os dois tipos de cabos, mas para qualquer salto de longa distância, eles serão transmitidos por um
+      link de fibra ótica.
+
+      <p>As fibras ópticas têm uma vantagem distinta quando se trata de largura de banda porque cada fibra pode transportar muitos comprimentos de onda diferentes (canais) de luz através de um processo conhecido como multiplexação por divisão de comprimento de onda (WDM).
+
+      <p>No início de 2010, os pesquisadores conseguiram multiplexar mais de 400 comprimentos de onda com a capacidade máxima de 171 Gbit/s por canal, totalizando mais de 70 Tbit/s de largura de banda total para um único link de fibra! Nós precisaríamos de milhares de links de fios de cobre(elétricos) para se comparar com a fibra. Não surpreendentemente, a maioria dos saltos de longa distância, como a transmissão de dados entre continentes, agora é feita através de links de fibra óptica. Cada cabo carrega vários fios de fibra (normalmente quatro cordões), o que se traduz em capacidade de largura de banda em centenas de terabits por segundo para cada cabo.
+    </section>
+
+    <section>
+      <h2 id="bandwidth-at-the-network-edge"><a href=
+      "#bandwidth-at-the-network-edge" class="anchor">§</a>Largura de Banda nas Redes de Borda (Network Edge)</h2>
+
+      <p>Os backbones, ou os links de fibra, que formam os principais caminhos de dados da Internet são capazes de movimentar centenas de terabits por segundo. No entanto, a capacidade disponível nas redes de borda é muito, muito menor, e varia descontroladamente com base na tecnologia implantada: dial-up, DSL, cabo, uma série de tecnologias sem fio, fiber-to-home e até mesmo o desempenho do roteador local. A largura de banda disponível para o usuário é função da ligação de menor capacidade entre o cliente eo servidor de destino (<a data-type="xref" href=
+      "#bw-latency-fig">Figura&nbsp;1-1</a>).
+
+      <p>Akamai Technologies opera um CDN global, com servidores posicionados em todo o mundo, e fornece relatórios trimestrais gratuitos <a href=
+      "http://www.akamai.io/">Akamai’s website</a> mostrando a média da velocidades de largura de banda,
+      relacionado com seus srevidores distribuidos pelo mundo. <a data-type="xref" href=
+      "#global-bandwidth-table">Tabela&nbsp;1-2</a> mostra os valores de tendência do final de 2015.
+
+      <figure id="global-bandwidth-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Classificação
+              <th>País
+              <th>Média Mbps
+              <th>Mudança Média entre Anos
+
+          <tbody>
+            <tr>
+              <td>-
+              <td>Global
+              <td><strong>5.1</strong>
+              <td>14%
+
+            <tr>
+              <td>1
+              <td>Coreia do Sul
+              <td><strong>20.5</strong>
+              <td>-19%
+
+            <tr>
+              <td>2
+              <td>Suécia
+              <td><strong>17.4</strong>
+              <td>23%
+
+            <tr>
+              <td>3
+              <td>Noruega
+              <td><strong>16.4</strong>
+              <td>44%
+
+            <tr>
+              <td>4
+              <td>Suiça
+              <td><strong>16.2</strong>
+              <td>12%
+
+            <tr>
+              <td>5
+              <td>Hong Kong
+              <td><strong>15.8</strong>
+              <td>-2.7%
+
+            <tr>
+              <td>…
+              <td>&nbsp;
+              <td><strong>&nbsp;</strong>
+              <td>&nbsp;
+
+            <tr>
+              <td>21
+              <td>Estados Unidos
+              <td><strong>12.6</strong>
+              <td>9.4%
+        </table>
+
+        <figcaption>
+          <span class="label">Tabela 1-2.</span> Média das Velocidades de Largura de Banda no terceiro
+          trimestre de 2015.
+        </figcaption>
+      </figure>
+
+      <p>Os dados anteriores excluem o tráfego de operadoras de celular, um tópico que voltará  ser examinado com detalhes mais tarde. Por enquanto, basta dizer que as velocidades de aparelhos móveis variam muito e geralmente são mais lentas. No entanto, mesmo com isso em mente, a média global largura de banda no final de 2015 foi de apenas 5,1 Mbps! Coréia do Sul liderou o mundo com
+      uma taxa de transferênica (throughput) médio de 20,5 Mbps, e os Estados Unidos ficaram em 21º lugar com 12,6 Mbps.
+
+      <p>Com o referência, a transmissão de um vídeo com qualidade HD pode exigir de 2 a 10Mbps, dependendo da resolução e do codec. Então um usuário mediano dentro dos estados Unidos pode transmitir um vídeo de alta resolução na rede de borda, mas isso também consumiria grande parte da sua capacidade do link - não é um ambiente muito promissor para uma residência com vários usuários.
+
+      <p>Descobrir o gargalo de largura de banda é para qualquer usuário, muitas vezes, um exercício pouco comum, mas importgante. Mais uma vez, para os curuisos, existem vários erviços on-line como <a href="http://speedtest.net/">speedtest.net</a> mantido pela Ookla (<a data-type=
+      "xref" href="#fig2">Figura&nbsp;1-2</a>), que fornecem testes de upstream e downstream trabalhando em conjunto com um servidor próximo - nós veremos por que escolher um servidor local é importante em nossa discussão sobre o TCP. Executando um teste em um desses serviços é uma boa maneira de verificar se sua conexão atende às velocidades anunciadas do seu ISP local.
+
+      <figure id="fig2">
+        <img src="../assets/diagrams/13f28d4c3bcea2a8e4420b3278ebffaf.png" alt=
+        "Figura 1-2. Teste de Upstream and downstream test (speedtest.net)">
+        <figcaption>
+          <span class="label">Figura 1-2.</span> Teste de Upstream e Downstream (speedtest.net)
+        </figcaption>
+      </figure>
+
+      <p>No entanto, embora um link com largura de banda alta para o seu ISP seja desejável, isto também não é uma garantia de desempenho de ponta a ponta; só porque um teste de largura de banda informa altas taxas de dados não significa que você pode ou deve esperar o mesmo desempenho de outros servidores remotos. A rede poderia estar congestionada em qualquer nó intermediário devido à alta demanda, falhas de hardware, um ataque de rede concentrado ou uma série de outras razões. Alta oscilação da taxa de transferênica e desempenho de latência é uma propriedade inerente de nossas redes de dados - prever, gerenciar e adaptar-se a mudança continua do "clima da rede" é uma tarefa complexa.
+    </section>
+
+    <section>
+      <h2 id="delivering-higher-bandwidth-and-lower-latencies"><a href=
+      "#delivering-higher-bandwidth-and-lower-latencies" class=
+      "anchor">§</a>Fornecendo Maior Largura de Banda e Menores Latências</h2>
+
+      <p>Nossa demanda por maior largura de banda está crescendo rapidamente, em grande parte devido a popularidade crescente do streaming de vídeo, que agora é responsável por bem mais da metade de todo o tráfego da Internet. A boa notícia é que, embora possa não ser barato, existem várias estratégias disponíveis para crescermos a capacidade disponível: podemos adicionar mais fibras em nossos links de fibra óptica, nós podemos implantar mais links através das rotas congestionadas, ou podemos melhorar as técnicas de WDM para transferir mais dados através de links existentes.
+
+      <p>TeleGeography, uma empresa de consultoria consultoria e pesquisa do mercado de telecomunicações, estima que a partir de 2011, estavamos utilizando, em média, apenas 20% da capacidade disponível dos links submarinos de fibra óptica implantados. Ainda mais importante, entre 2007 e 2011, mais da metade de toda a capacidade de utilização dos cabos transoceânicos teve como responsável a atualizações de atualização de hardware utilizando tecnoliga WDM: a mesmo link de fibra, utilinzadp uma tecnologia melhor em ambas as extremidades para multiplexar os dados. Claro, não podemos esperar que esses avanços continuem indefinidamente. No entanto, enquanto economia das empresas permitirem, não há razão fundamental para que a largura de banda e a taxa de transferência não possam aumentar com o tempo - se tudo isso falhar, podemos adicionar mais links de fibra.
+
+      <p>A questão da latência, por outro lado, é uma história muito diferente. A qualidade dos links de fibra poderiam ser melhorados para nos aproximar um pouco mais da velocidade da luz: melhores materiais com menor índice de refração e roteadores mais rápidos ao longo do caminho. No entanto, dado que nossas velocidades atuais já estão dentro de aproximadamente 2/3 da
+      velocidade da luz, o máximo que podemos esperar dessa estratégia é apenas uma melhoria modesta de 30%. Infelizmente, simplesmente não há maneira de contornar as leis da física: a velocidade da luz coloca um limite rígido na latência mínima.
+
+      <p>Alternativamente, como não podemos fazer viagens de forma mais rápida, podemos encurtar as distâncias. Contudo, colocar novos cabos nem sempre é possível devido às restrições impostas pelo terreno físico, por razões sociais e políticas, e logicamente, os custos associados.
+
+      <p>Como resultado, para melhorar o desempenho de nossos aplicativos, precisamos arquitetar e otimizar nossos protocolos e código de rede com consciência das limitações da largura de banda disponível e da velocidade da luz: precisamos reduzir viagens de ida e volta, aproximar os dados do cliente e construir aplicativos que possam ocultar a latência por meio do cache, pré-busca, e uma variedade de técnicas similares, como explicado em capítulos subseqüentes.
+    </section>
+  </article>
+
+  <footer>
+    <div id="toast">
+      &nbsp;
+    </div>
+
+    <p><a href="../index.html#toc"><em>« Back to the Table of Contents</em></a>
+
+    <p class="legal">Copyright © 2013 <a href="https://www.igvita.com/" rel=
+    "me">Ilya Grigorik</a>. Published by O'Reilly Media, Inc. Licensed under
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND
+    4.0</a>.
+  </footer>
+
